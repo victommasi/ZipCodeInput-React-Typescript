@@ -1,2 +1,2 @@
-# ZipCodeInput-React-Typescript
+# Calendar-React-Typescript
 Created with CodeSandbox

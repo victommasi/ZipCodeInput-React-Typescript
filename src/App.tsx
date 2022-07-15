@@ -1,5 +1,5 @@
-import Calendar from "./components/Calendar";
+import ZipCodeInput from "./components/ZipCodeInput";
 
 export default function App() {
-  return <Calendar />;
+  return <ZipCodeInput />;
 }

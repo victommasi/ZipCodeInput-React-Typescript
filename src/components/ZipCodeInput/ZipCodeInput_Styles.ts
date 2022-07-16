@@ -37,12 +37,17 @@ export const InputWrapper = styled.div`
     }
   }
 
+  .form-field-error-msg {
+    color: red;
+    font-size: ${fontSize.xs};
+  }
+
   .input-icon {
     position: absolute;
     left: 10px;
-    bottom: 12px;
+    top: 13px;
     color: ${colors.gray};
-    transition: color 0.2s ease-out;
+    transition: color 0.15s ease-out;
 
     &--valid {
       color: ${colors.green};
@@ -60,13 +65,13 @@ export const InputWrapper = styled.div`
     transition: border 0.1s ease-out;
     font-size: ${fontSize.sm};
 
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
-    input[type="number"] {
+    [type="number"] {
       -moz-appearance: textfield;
     }
   }
@@ -80,7 +85,7 @@ export const InputWrapper = styled.div`
     left: 12px;
     display: block;
     color: ${colors.secondary};
-    transition: color 0.2s ease-in-out;
+    transition: color 0.15s ease-in-out;
 
     &:before {
       content: "";

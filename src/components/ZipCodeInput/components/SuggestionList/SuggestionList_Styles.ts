@@ -16,10 +16,25 @@ export const ListWrapper = styled.ul`
   max-height: 300px;
   overflow-y: auto;
 
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: ${colors.lightgray};
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${colors.gray};
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
   > li {
     width: 100%;
     height: 40px;
-    padding: 5px 10px;
     transition: background-color 0.15s ease-out;
 
     &:hover {
@@ -31,6 +46,7 @@ export const ListWrapper = styled.ul`
   .zipcode-button {
     width: 100%;
     height: 100%;
+    padding: 5px 10px;
     background: none;
     border: none;
     text-align: left;

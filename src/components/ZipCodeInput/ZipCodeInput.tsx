@@ -2,18 +2,23 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { InputWrapper } from "./ZipCodeInput_Styles";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IFormField, ZipCode } from "./types";
+import { IFormField, ZipCode, ZipCodeInputProps } from "./types";
 import classNames from "classnames";
 import { translation, zipCodeRegex } from "./constants";
 import { isArrayEmpty } from "./utils";
 import { fetchZipCodes } from "./services/zipcodeService";
 import SuggestionList from "./components/SuggestionList";
 
-const ZipCodeInput = () => {
+const ZipCodeInput = ({
+  value: customValue,
+  onChange,
+  label,
+  errorMsg
+}: ZipCodeInputProps) => {
   const [{ value, isValid, isDirty, isFocused }, setFieldState] = useState<
     IFormField
   >({
-    value: "",
+    value: customValue,
     isValid: false,
     isDirty: false,
     isFocused: false
@@ -21,10 +26,10 @@ const ZipCodeInput = () => {
 
   const [zipcodes, setZipcodes] = useState<ZipCode[]>([]);
   const [filteredZipcodes, setFilteredZipcodes] = useState<ZipCode[]>([]);
-  const suggestionListRef = useRef<any>(null);
-  const formFieldRef = useRef<any>(null);
+  const suggestionListRef = useRef<HTMLUListElement>(null);
+  const formFieldRef = useRef<HTMLDivElement>(null);
   const isShowSuggestionList = !isArrayEmpty(filteredZipcodes);
-  const hasError = !isValid && isDirty && !isFocused;
+  const hasError = !isValid && isDirty && !isFocused && value !== "";
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -42,8 +47,10 @@ const ZipCodeInput = () => {
     [zipcodes]
   );
 
-  const closeSuggestionList = useCallback((e: Event): void => {
-    const { target } = e;
+  useEffect(() => onChange(value), [value, onChange]);
+
+  const closeSuggestionList = useCallback((e: MouseEvent): void => {
+    const target = e.target as HTMLElement;
     if (
       !suggestionListRef.current?.contains(target) &&
       !formFieldRef.current?.contains(target)
@@ -87,11 +94,13 @@ const ZipCodeInput = () => {
 
   const handleSelectZipcode = useCallback((zipcode: number): void => {
     setFilteredZipcodes([]);
+    const zipCodeText = zipcode.toString();
+
     setFieldState((prev: IFormField) => ({
       ...prev,
       isFocused: false,
-      isValid: zipCodeRegex.test(zipcode.toString()),
-      value: zipcode.toString()
+      isValid: zipCodeRegex.test(zipCodeText),
+      value: zipCodeText
     }));
   }, []);
 
@@ -105,7 +114,7 @@ const ZipCodeInput = () => {
         })}
       >
         <label htmlFor="zipcode" className="input-label">
-          {translation.ZIPCODE}
+          {label}
         </label>
         <FontAwesomeIcon
           className={classNames("input-icon", {
@@ -128,11 +137,7 @@ const ZipCodeInput = () => {
           zipcodes={filteredZipcodes}
           onSelect={handleSelectZipcode}
         />
-        {hasError && (
-          <span className="form-field-error-msg">
-            {translation.INVALID_FORMAT}
-          </span>
-        )}
+        {hasError && <span className="form-field-error-msg">{errorMsg}</span>}
       </div>
     </InputWrapper>
   );

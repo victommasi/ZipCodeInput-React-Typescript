@@ -15,3 +15,10 @@ export type SuggestionListProps = {
   zipcodes: ZipCode[];
   onSelect: (zipcode: number) => void;
 };
+
+export type ZipCodeInputProps = {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+  errorMsg: string;
+};

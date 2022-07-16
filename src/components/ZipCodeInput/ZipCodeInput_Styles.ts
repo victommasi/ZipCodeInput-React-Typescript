@@ -9,6 +9,7 @@ export const InputWrapper = styled.div`
   border-radius: 8px;
   display: flex;
   align-items: center;
+  position: relative;
 
   .form-field {
     position: relative;

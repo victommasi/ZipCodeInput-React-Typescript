@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { InputWrapper } from "./ZipCodeInput_Styles";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { colors } from "../../styles";
-import { IFormField } from "./types";
+import { IFormField, ZipCode } from "./types";
 import classNames from "classnames";
 import { zipCodeRegex } from "./constants";
+import { isArrayEmpty } from "./utils";
+import { fetchZipCodes } from "./services/zipcodeService";
+import SuggestionList from "./components/SuggestionList";
 
 const ZipCodeInput = () => {
   const [{ value, isValid, isDirty, isFocused }, setFieldState] = useState<
@@ -17,15 +19,24 @@ const ZipCodeInput = () => {
     isFocused: false
   });
 
+  const [zipcodes, setZipcodes] = useState<ZipCode[]>([]);
+  const [filteredZipcodes, setFilteredZipcodes] = useState<ZipCode[]>([]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { value } = e.target;
+
+    setFilteredZipcodes(
+      zipcodes?.filter(({ zipcode }) => zipcode.toString().includes(value))
+    );
+
     setFieldState((prev: IFormField) => ({
       ...prev,
       value
     }));
   };
 
-  const handleValidation = (): void => {
+  const handleBlur = (e: any): void => {
+    setFilteredZipcodes([]);
     setFieldState((prev: IFormField) => ({
       ...prev,
       isFocused: false,
@@ -33,11 +44,28 @@ const ZipCodeInput = () => {
     }));
   };
 
-  const handleFocus = (): void => {
+  const handleFocus = async (): Promise<void> => {
+    if (isArrayEmpty(zipcodes)) {
+      try {
+        const response = await fetchZipCodes();
+        setZipcodes(response.data);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     setFieldState((prev: IFormField) => ({
       ...prev,
       isFocused: true,
       isDirty: true
+    }));
+  };
+
+  const handleSelectZipcode = (zipcode: number): void => {
+    console.log(zipcode);
+    setFieldState((prev: IFormField) => ({
+      ...prev,
+      value: zipcode.toString()
     }));
   };
 
@@ -62,10 +90,14 @@ const ZipCodeInput = () => {
           type="number"
           name="zipcode"
           className="input-field"
-          onChange={handleChange}
           value={value}
-          onBlur={handleValidation}
+          onChange={handleChange}
+          onBlur={handleBlur}
           onFocus={handleFocus}
+        />
+        <SuggestionList
+          zipcodes={filteredZipcodes}
+          onSelect={handleSelectZipcode}
         />
       </div>
     </InputWrapper>

@@ -4,3 +4,14 @@ export interface IFormField {
   isDirty: boolean;
   isFocused: boolean;
 }
+
+export type ZipCode = {
+  zipcode: number;
+  city: string;
+  state: string;
+};
+
+export type SuggestionListProps = {
+  zipcodes: ZipCode[];
+  onSelect: (zipcode: number) => void;
+};
